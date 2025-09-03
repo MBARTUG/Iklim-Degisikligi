@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>İklim Çözümü: Kişisel ve Toplumsal Eylem Planı</title>
+  <meta name="description" content="İklim değişikliğine karşı eylem planı: hızlı hesaplayıcı, kontrol listesi, mahalle ve politika adımları. Tamamen tek dosyada, çevrimdışı çalışır." />
+  <style>
+    :root{
+      --bg:#0b1020;--card:#121835;--muted:#7b87b9;--text:#e7ecff;--accent:#6ee7b7;--accent-2:#60a5fa;--danger:#fca5a5;--ok:#a7f3d0;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:radial-gradient(1200px 800px at 20% 0%,#111a3d 0%,#0b1020 50%,#070b17 100%);color:var(--text)}
+    a{color:var(--accent-2);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:grid;gap:16px;grid-template-columns:1.2fr .8fr;align-items:center}
+    @media (max-width:900px){header{grid-template-columns:1fr}}
+    .hero{padding:24px;border:1px solid #20274f;background:linear-gradient(180deg,rgba(96,165,250,.12),transparent);border-radius:24px}
+    h1{font-size:clamp(28px,4vw,44px);line-height:1.1;margin:0 0 10px;font-weight:800}
+    .subtitle{color:var(--muted);font-size:clamp(14px,2vw,18px)}
+    .cta{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{padding:12px 16px;border-radius:14px;border:1px solid #24306b;background:#162050;color:#e7ecff;font-weight:700;cursor:pointer}
+    .btn.primary{background:linear-gradient(135deg,#60a5fa,#6ee7b7);color:#0a1020;border:none}
+    .btn.ghost{background:transparent}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(12,1fr)}
+    .card{grid-column:span 12;background:var(--card);border:1px solid #1c2347;border-radius:20px;padding:18px}
+    .card h2{margin:0 0 8px;font-size:22px}
+    .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .kpi{background:#0f1530;border:1px solid #1c2347;border-radius:16px;padding:12px}
+    .kpi .big{font-weight:900;font-size:28px}
+    .muted{color:var(--muted)}
+    .two{grid-column:span 7}
+    .five{grid-column:span 5}
+    @media (max-width:1000px){.two,.five{grid-column:span 12}}
+    .row{display:flex;gap:12px;align-items:center}
+    .field{display:flex;flex-direction:column;gap:6px;flex:1}
+    label{font-size:13px;color:#a7b0de}
+    input[type="number"],select{width:100%;padding:12px 10px;border-radius:12px;border:1px solid #2a356a;background:#0f1530;color:#e7ecff}
+    .pill{display:inline-flex;align-items:center;gap:8px;background:#0f1530;border:1px solid #253067;padding:6px 10px;border-radius:999px;font-size:12px}
+    .list{display:grid;gap:10px}
+    .list .item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;background:#0f1530;border:1px solid #263067;border-radius:14px;padding:10px}
+    .impact{font-weight:800}
+    .bar{height:10px;background:#11183a;border:1px solid #24306b;border-radius:999px;overflow:hidden}
+    .bar>span{display:block;height:100%;background:linear-gradient(90deg,#6ee7b7,#60a5fa)}
+    .footer{margin:30px 0;color:#8ea0db;font-size:13px}
+    .tag{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid #30408a;background:#0c142e;color:#9fb3ff}
+    .success{color:#052e1b;background:#0b3a22;border-color:#1f8f64}
+    .danger{color:#3a0b0b;background:#2a0f12;border-color:#8f1f1f}
+    .note{font-size:12px;color:#9fb1ff}
+    .divider{height:1px;background:#1a2550;margin:18px 0}
+    .small{font-size:12px}
+    .right{justify-self:end}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="hero">
+        <h1>İklim Değişikliğini <span style="background:linear-gradient(90deg,#6ee7b7,#60a5fa);-webkit-background-clip:text;background-clip:text;color:transparent">Birlikte</span> Çözelim</h1>
+        <p class="subtitle">Bu tek sayfalık uygulama; kişisel karbon ayak izinizi hızlıca hesaplamanızı, etkili eylemleri seçip yıllık etkisini görmenizi ve mahalleniz/kurumunuz için bir mini eylem planı oluşturmanızı sağlar.</p>
+        <div class="cta">
+          <button class="btn primary" onclick="document.getElementById('calc').scrollIntoView({behavior:'smooth'})">Hızlı Hesaplayıcı</button>
+          <button class="btn" onclick="window.print()">PDF Olarak Yazdır</button>
+          <button class="btn ghost" onclick="resetAll()">Sıfırla</button>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi">
+          <div class="small muted">Seçili Eylem Etkisi</div>
+          <div class="big" id="kpi-saved">0 kg</div>
+          <div class="small">Yıllık CO₂e azaltımı</div>
+        </div>
+        <div class="kpi">
+          <div class="small muted">Kişisel Emisyon</div>
+          <div class="big" id="kpi-total">0 kg</div>
+          <div class="small">Yıllık tahmini CO₂e</div>
+        </div>
+        <div class="kpi">
+          <div class="small muted">Ağaç Eşdeğeri*</div>
+          <div class="big" id="kpi-trees">0</div>
+          <div class="small">Yılda ~21 kg/ ağaç</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="grid" style="margin-top:16px">
+      <!-- Hesaplayıcı -->
+      <section id="calc" class="card two">
+        <h2>Hızlı Karbon Hesaplayıcı</h2>
+        <p class="muted small">Bu basit hesaplayıcı, yaygın kaynaklar için ortalama emisyon katsayıları kullanır (yaklaşık değerlerdir). Ayrıntılı bir envanter değildir.</p>
+        <div class="row">
+          <div class="field">
+            <label>Aylık elektrik tüketimi (kWh)</label>
+            <input type="number" id="el" value="200" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Aylık doğal gaz (m³)</label>
+            <input type="number" id="ng" value="50" min="0" step="1" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="field">
+            <label>Araba kullanımı (km/ay)</label>
+            <input type="number" id="car" value="500" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label>Uçuş (saat/yıl)</label>
+            <input type="number" id="flight" value="10" min="0" step="1" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="field">
+            <label>Hane kişi sayısı</label>
+            <input type="number" id="pp" value="3" min="1" step="1" />
+          </div>
+          <div class="field">
+            <label>Diyet</label>
+            <select id="diet">
+              <option value="std">Karışık (et + süt + bitkisel)</option>
+              <option value="less">Azaltılmış et/süt</option>
+              <option value="veg">Vejetaryen</option>
+              <option value="vegan">Vegan</option>
+            </select>
+          </div>
+        </div>
+        <div class="cta" style="margin-top:12px">
+          <button class="btn primary" onclick="calc()">Hesapla</button>
+          <span class="pill">Elektrik: ~0.4 kg/kWh · Doğal gaz: ~2.0 kg/m³ · Araba: ~0.18 kg/km · Uçuş: ~90 kg/saat</span>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="field">
+            <label>Yıllık tahmini emisyon (kg CO₂e)</label>
+            <input id="outTotal" readonly />
+          </div>
+          <div class="field">
+            <label>Kişi başı (kg CO₂e/yıl)</label>
+            <input id="outPerCap" readonly />
+          </div>
+        </div>
+      </section>
+
+      <!-- Eylem listesi -->
+      <section class="card five">
+        <h2>Etkili Kişisel Eylemler</h2>
+        <p class="small muted">Aşağıdan seçtikçe toplam yıllık azaltım güncellenir. Tasarruflar tahmini ve üst üste binerken dikkatli yorumlanmalıdır.</p>
+        <div class="list" id="actions"></div>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="field">
+            <label>Toplam yıllık tasarruf</label>
+            <div class="bar"><span id="bar" style="width:0%"></span></div>
+            <div class="row" style="justify-content:space-between"><span class="impact" id="impact">0 kg CO₂e/yıl</span><span class="muted small">0%*</span></div>
+          </div>
+        </div>
+        <p class="note">*Yüzde, seçtiğiniz eylemlerin toplamını tahmini yıllık emisyonunuza oranlar.</p>
+      </section>
+
+      <!-- Toplumsal & Politika -->
+      <section class="card two">
+        <h2>Mahalle/Kurum Eylemleri</h2>
+        <ul class="list">
+          <li class="item">
+            <input type="checkbox" id="coop" onchange="toggleTag(this,'#t-coop')" />
+            <div>
+              <strong>Enerji kooperatifi girişimi</strong>
+              <div class="muted small">Apartman/mahalle çatılarında GES, ortak ısı pompası, ısı yalıtımı için toplu finansman.</div>
+            </div>
+            <span class="tag" id="t-coop">Planlandı</span>
+          </li>
+          <li class="item">
+            <input type="checkbox" id="transit" onchange="toggleTag(this,'#t-transit')" />
+            <div>
+              <strong>Ulaşımda dönüşüm</strong>
+              <div class="muted small">Okul/iş yeri servis planı, bisiklet parkları, haftada 1 gün arabasız gün.</div>
+            </div>
+            <span class="tag" id="t-transit">Planlandı</span>
+          </li>
+          <li class="item">
+            <input type="checkbox" id="waste" onchange="toggleTag(this,'#t-waste')" />
+            <div>
+              <strong>Atık ısı & gıda</strong>
+              <div class="muted small">Bina atık ısısının ısıtmaya geri kazanımı, gıda paylaşım dolabı, kompost.</div>
+            </div>
+            <span class="tag" id="t-waste">Planlandı</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="card five">
+        <h2>Politika Düzeyinde Ne İsteyelim?</h2>
+        <div class="list">
+          <div class="item">
+            <span class="tag">Şebeke</span>
+            <div>
+              <strong>Yenilenebilir enerjiye hızlı geçiş</strong>
+              <div class="muted small">İhale ve izin süreçlerinin basitleştirilmesi, şebeke esnekliği, enerji verimliliği programları.</div>
+            </div>
+            <a class="right small" href="#" onclick="alert('Yerel vekilinize, belediyenize ve enerji kurumlarına yazın: hedefler, teşvikler ve adil geçiş talep edin.')">Harekete geç</a>
+          </div>
+          <div class="item">
+            <span class="tag">Binalar</span>
+            <div>
+              <strong>Isı pompası ve yalıtım teşvikleri</strong>
+              <div class="muted small">Düşük gelirli haneler için destek; mevcut binalarda derin enerji renovasyonu.</div>
+            </div>
+            <a class="right small" href="#" onclick="alert('Belediyenize yazın: bina enerji performansı standardı ve hibe programları isteyin.')">Harekete geç</a>
+          </div>
+          <div class="item">
+            <span class="tag">Ulaşım</span>
+            <div>
+              <strong>Toplu taşıma ve aktif ulaşım</strong>
+              <div class="muted small">Hızlı otobüs hatları, mikro mobilite, güvenli bisiklet yolları.</div>
+            </div>
+            <a class="right small" href="#" onclick="alert('Ulaşım müdürlüğüne yazın: bisiklet/otobüs altyapısı, düşük emisyon bölgeleri talep edin.')">Harekete geç</a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <div>⚠️ <strong>Not:</strong> Bu sayfadaki emisyon katsayıları yaklaşık ortalamalardır; ülke/bölge, araç ve davranışa göre değişir. Amaç, hızlıca <em>yaklaşık büyüklük</em> görmek ve eyleme geçmektir.</div>
+    </footer>
+  </div>
+
+  <script>
+    // Basit emisyon katsayıları (yaklaşık):
+    const EF = {
+      electricity: 0.4,     // kg CO2e / kWh
+      gas: 2.0,             // kg CO2e / m3
+      car: 0.18,            // kg CO2e / km (karışık filo)
+      flightHour: 90,       // kg CO2e / saat (ekonomi sınıfı, kısa-orta menzil)
+      treePerYear: 21       // kg CO2e / ağaç/yıl ~ kaba
+    };
+
+    // Diyete göre kişi başı gıda emisyonu (kg/yıl) — kaba
+    const DIET = { std: 1800, less: 1400, veg: 1200, vegan: 1000 };
+
+    function fmtkg(x){
+      return new Intl.NumberFormat('tr-TR', {maximumFractionDigits:0}).format(Math.round(x)) + ' kg';
+    }
+
+    function calc(){
+      const el = +document.getElementById('el').value || 0;
+      const ng = +document.getElementById('ng').value || 0;
+      const car = +document.getElementById('car').value || 0;
+      const flight = +document.getElementById('flight').value || 0;
+      const pp = Math.max(1, +document.getElementById('pp').value || 1);
+      const diet = document.getElementById('diet').value;
+
+      const annual = (el*12*EF.electricity) + (ng*12*EF.gas) + (car*12*EF.car) + (flight*EF.flightHour) + (pp*DIET[diet]);
+      const perCap = annual / pp;
+
+      document.getElementById('outTotal').value = Math.round(annual);
+      document.getElementById('outPerCap').value = Math.round(perCap);
+
+      document.getElementById('kpi-total').textContent = fmtkg(annual);
+      const trees = Math.max(0, annual/EF.treePerYear);
+      document.getElementById('kpi-trees').textContent = new Intl.NumberFormat('tr-TR', {maximumFractionDigits:0}).format(trees);
+      updateBar();
+    }
+
+    // Eylemler listesi (yıllık tahmini kg CO2e azaltımı)
+    const ACTIONS = [
+      {id:'led', title:'LED aydınlatmaya geç', save:150, note:'Evdeki ampullerin çoğunu LED yap.'},
+      {id:'ins', title:'Isı yalıtımı (duvar/çatı)', save:600, note:'Isı kaybını %20-30 azaltır.'},
+      {id:'hp', title:'Isı pompası', save:1200, note:'Kombiye kıyasla ısıtmada büyük düşüş.'},
+      {id:'thermo', title:'Akıllı termostat', save:250, note:'Kışın 1°C daha düşük, yazın 1°C daha yüksek.'},
+      {id:'bike', title:'Haftada 2 gün bisiklet/toplu taşıma', save:500, note:'Araba km’sini ciddi azaltır.'},
+      {id:'meat', title:'Haftada 5 bitkisel öğün ekle', save:400, note:'Et/süt yerine baklagil, sebze.'},
+      {id:'flightless', title:'1 kısa uçuşu iptal/alternatif', save:300, note:'Tren/otobüs ile değiştir.'},
+      {id:'solar', title:'Çatı GES (paylaşımlı olabilir)', save:800, note:'Elektriği yeşillendirir.'},
+      {id:'eff', title:'A++ cihazlar', save:200, note:'Eski buzdolabı/klima vs. değişimi.'},
+      {id:'waste', title:'Gıda israfını yarıya indir', save:150, note:'Planlı alışveriş, saklama.'}
+    ];
+
+    const actionsEl = document.getElementById('actions');
+    ACTIONS.forEach(a=>{
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.innerHTML = `
+        <input type="checkbox" id="chk-${a.id}" data-save="${a.save}" onchange="updateBar()" />
+        <div>
+          <label for="chk-${a.id}"><strong>${a.title}</strong></label>
+          <div class="muted small">~${a.save} kg/yıl · ${a.note}</div>
+        </div>
+        <span class="tag">Eylem</span>
+      `;
+      actionsEl.appendChild(div);
+    });
+
+    function selectedSavings(){
+      return [...document.querySelectorAll('#actions input[type=checkbox]:checked')]
+        .map(x=>+x.dataset.save).reduce((a,b)=>a+b,0);
+    }
+
+    function totalAnnual(){
+      const val = +document.getElementById('outTotal').value || 0;
+      return val;
+    }
+
+    function updateBar(){
+      const saved = selectedSavings();
+      const total = totalAnnual();
+      const pct = total>0 ? Math.min(100, Math.round(saved/total*100)) : 0;
+      document.getElementById('impact').textContent = fmtkg(saved) + '/yıl';
+      document.getElementById('bar').style.width = pct + '%';
+      document.getElementById('kpi-saved').textContent = fmtkg(saved);
+      const pctEl = document.querySelector('.row .muted.small:last-child');
+      if(pctEl) pctEl.textContent = pct + '%';
+    }
+
+    function toggleTag(cb, sel){
+      const el = document.querySelector(sel);
+      if(!el) return;
+      if(cb.checked){ el.classList.add('success'); el.textContent='Başladı'; }
+      else { el.classList.remove('success'); el.textContent='Planlandı'; }
+    }
+
+    function resetAll(){
+      document.querySelectorAll('input[type=number]').forEach(i=>i.value=i.id==='pp'?3:(i.id==='el'?200:(i.id==='ng'?50:(i.id==='car'?500:(i.id==='flight'?10:0)))));
+      document.getElementById('diet').value='std';
+      document.querySelectorAll('#actions input[type=checkbox]').forEach(c=>c.checked=false);
+      document.querySelectorAll('#coop,#transit,#waste').forEach(c=>c.checked=false);
+      ['#t-coop','#t-transit','#t-waste'].forEach(s=>{const el=document.querySelector(s); if(el){el.classList.remove('success'); el.textContent='Planlandı';}});
+      calc();
+    }
+
+    // İlk yüklemede hesapla
+    calc();
+  </script>
+</body>
+</html>
