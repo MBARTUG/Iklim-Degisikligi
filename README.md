@@ -1,2 +1,2 @@
 # Iklim-Degisikligi
-Iklim degisikligini ele alan bir html dosyası ve PowerPoint sunumu
+İklim deşişikliğini konu alan bir html dosyası ve PowerPoint sunumu
